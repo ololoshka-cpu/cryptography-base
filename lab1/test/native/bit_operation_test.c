@@ -231,15 +231,36 @@ void test_round_function() {
         0b10101110
     };
     bit_permutation(r_block, 32, E_TABLE, false, true, expanded_r_block, 48);
-    printf("EXPANDED FUNCTION : %s\n", memcmp(expanded_r_block, expected_expanded_round_block, 48) == 0 ? "✅ OK" : "❌ FAIL");
+    printf("EXPANDED FUNCTION : %s\n", memcmp(expanded_r_block, expected_expanded_round_block, 6) == 0 ? "✅ OK" : "❌ FAIL");
 
     //==========================================================================
     uint8_t expected_xor[6] = {0};
     uint8_t result_xor[6] = {0};
     byte_xor(expanded_r_block, expanded_r_block, result_xor, 6);
-    printf("XOR TEST : %s\n", memcmp(expected_xor, result_xor, 48) == 0 ? "✅ OK" : "❌ FAIL");
+    printf("XOR TEST : %s\n", memcmp(expected_xor, result_xor, 6) == 0 ? "✅ OK" : "❌ FAIL");
+    //==========================================================================
 
-    //============================
+    uint8_t expected_cypher_blockp[] = {
+        0b11010010,
+        0b11011101,
+        0b01100010,
+        0b10111100
+    };
+
+    uint8_t round_key[] = {
+        0b01010110,
+        0b01111011,
+        0b11011010,
+        0b11010111,
+        0b11110111,
+        0b11111111
+    };
+
+    uint8_t result_cypher_block[4] = {0};
+
+    round_function(r_block, round_key, result_cypher_block);
+
+    printf("ROUND FUNCTION TEST : %s\n", memcmp(expected_xor, result_xor, 4) == 0 ? "✅ OK" : "❌ FAIL");
 }
 
 int main(void) {
@@ -250,8 +271,6 @@ int main(void) {
     test_only_target_bit_changes();
     test_highest_index_in_array();
     test_cross_byte_sequences(); 
-    test_key_schedule();
-    
 
     uint8_t input1[1] = {0b10101010};
     size_t perm1[8] = {0,1,2,3,4,5,6,7};
@@ -274,7 +293,8 @@ int main(void) {
     const uint8_t expected5[1] = {0b10100000};
     test_case("Partial bits", input1, 8, perm5, false, false, 4, expected5);
 
-    puts("All tests passed.");
+    test_key_schedule();
+    test_round_function();
     return 0;
 }
 

@@ -22,6 +22,5 @@ uint8_t get_input_for_s_transform(uint8_t *src, int s_number) {
 uint8_t s_transform(uint8_t src, int s_number) {
     uint8_t row = (src & 0b100000) >> 4 | (src & 0b000001);
     uint8_t column = (src & 0b011110) >> 1;
-    printf("row = %d, column = %d\n", row, column);
     return S_BLOCKS[s_number][(row << 4) + column];
 }
