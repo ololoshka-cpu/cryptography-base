@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include "include/bit_operation.h"
 #include "include/bit_permutation.h"
-#include "include/key_schedule.h"
-#include "include/round_function.h"
+#include "include/DES/key_schedule.h"
+#include "include/DES/round_function.h"
 
 int main() {
 
@@ -73,7 +73,7 @@ int main() {
 
     uint8_t res_block[4] = {0};
     
-    round_function(r_block, round_key, res_block);
+    round_function_des(r_block, round_key, res_block);
 
     print_byte_array_binary(res_block, 4);
 

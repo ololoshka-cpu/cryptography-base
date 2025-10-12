@@ -5,8 +5,8 @@
 
 #include "../../native/include/bit_operation.h"
 #include "../../native/include/bit_permutation.h"
-#include "../../native/include/key_schedule.h"
-#include "../../native/include/round_function.h"
+#include "../../native/include/DES/key_schedule.h"
+#include "../../native/include/DES/round_function.h"
 
 static void assert_only_bit_changed(
     const uint8_t *before,
@@ -209,7 +209,7 @@ void test_key_schedule() {
 
     uint8_t result_key[NUM_ROUNDS][ROUND_KEY_SIZE] = {0};
 
-    generate_round_keys(key, result_key);
+    generate_round_keys_des(key, result_key);
 
     printf("KEY SCHEDULE : %s\n", memcmp(expected_key, result_key, NUM_ROUNDS * ROUND_KEY_SIZE) == 0 ? "✅ OK" : "❌ FAIL");
 };
@@ -258,7 +258,7 @@ void test_round_function() {
 
     uint8_t result_cypher_block[4] = {0};
 
-    round_function(r_block, round_key, result_cypher_block);
+    round_function_des(r_block, round_key, result_cypher_block);
 
     printf("ROUND FUNCTION TEST : %s\n", memcmp(expected_xor, result_xor, 4) == 0 ? "✅ OK" : "❌ FAIL");
 }
