@@ -66,4 +66,8 @@ public class DESCypher extends FeistelNetwork implements SymmetricCypher {
             decryptKeys[i] = encryptKeys[encryptKeys.length - 1 - i];
         }
     }
+
+    public static void main(String[] args) {
+        DESCypher desCypher = new DESCypher(new DESKeySchedule(), new DESRoundFunction(), new byte[]{1, 2, 3, 4, 5, 6, 7, 8});
+    }
 }

@@ -27,7 +27,7 @@ void print_byte_binary(uint8_t byte) {
     }
 }
 
-void byte_xor(uint8_t *first, uint8_t *second, uint8_t *result, size_t bytes_count) {
+void byte_xor(uint8_t *first, const uint8_t *second, uint8_t *result, size_t bytes_count) {
     for (size_t i = 0; i < bytes_count; i++) {
         result[i] = first[i] ^ second[i];
     }

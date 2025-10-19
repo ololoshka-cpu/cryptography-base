@@ -7,5 +7,8 @@ public interface RoundFunction {
      * @param roundKey ключ конкретного раунда
      * @return результат преобразования
      */
+    // надо значит надо
     byte[] apply(byte[] inputBlock, byte[] roundKey);
+
+    long getFunctionAddress();
 }

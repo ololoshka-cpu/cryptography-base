@@ -17,9 +17,24 @@ public class DESKeySchedule implements KeySchedule {
         return generateRoundKeysNative(masterKey);
     }
 
-    public static void main(String[] args) {
-        byte[] masterKey = new byte[]{1, 1, 1, 1, 1, 1, 1, 1};
-        DESKeySchedule keySchedule = new DESKeySchedule();
-        keySchedule.generateRoundKeys(masterKey);
-    }
+//    public static void main(String[] args) {
+//        byte[] masterKey = new byte[]{
+//                0b00010011,
+//                0b00110100,
+//                0b01010111,
+//                0b01111001,
+//                (byte) 0b10011011,
+//                (byte) 0b10111100,
+//                (byte) 0b11011111,
+//                (byte) 0b11110001
+//        };
+//        DESKeySchedule keySchedule = new DESKeySchedule();
+//        byte[][] roundKeys = keySchedule.generateRoundKeys(masterKey);
+//        for (int i = 0; i < 16; i++) {
+//            for (int j = 0; j < 6; j++) {
+//                System.out.print(roundKeys[i][j] + " ");
+//            }
+//            System.out.print("\n");
+//        }
+//    }
 }

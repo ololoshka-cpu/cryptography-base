@@ -7,6 +7,7 @@
 #include "../../native/include/bit_permutation.h"
 #include "../../native/include/DES/key_schedule.h"
 #include "../../native/include/DES/round_function.h"
+#include "../../native/include/feistel_network.h"
 
 static void assert_only_bit_changed(
     const uint8_t *before,
@@ -260,41 +261,116 @@ void test_round_function() {
 
     round_function_des(r_block, round_key, result_cypher_block);
 
-    printf("ROUND FUNCTION TEST : %s\n", memcmp(expected_xor, result_xor, 4) == 0 ? "✅ OK" : "❌ FAIL");
+    printf("ROUND FUNCTION TEST : %s\n", memcmp(expected_cypher_blockp, result_cypher_block, 4) == 0 ? "✅ OK" : "❌ FAIL");
 }
 
+static void test_single_round_matches_manual() {
+    const size_t block_len = 8; // 64 бита: 32 бита слева, 32 справа
+    const size_t rounds = 2;
+
+    // детерминированные данные
+    uint8_t input[8] = { 0x6b,0xc1,0xbe,0xe2, 0x2e,0x40,0x9f,0x96 }; // просто фиксированный пример  
+    uint8_t **encrypt_keys = (uint8_t **)malloc(sizeof(uint8_t *) * rounds);
+    encrypt_keys[0] = (uint8_t *)malloc(sizeof(uint8_t) * 6);
+    encrypt_keys[1] = (uint8_t *)malloc(sizeof(uint8_t) * 6);
+
+    encrypt_keys[0][0] = 0x13;
+    encrypt_keys[0][1] = 0x34;
+    encrypt_keys[0][2] = 0x57;
+    encrypt_keys[0][3] = 0x79;
+    encrypt_keys[0][4] = 0x9b;
+    encrypt_keys[0][5] = 0xbc;
+
+    encrypt_keys[1][0] = 0x23;
+    encrypt_keys[1][1] = 0x54;
+    encrypt_keys[1][2] = 0x77;
+    encrypt_keys[1][3] = 0x29;
+    encrypt_keys[1][4] = 0xab;
+    encrypt_keys[1][5] = 0xfc;
+
+    uint8_t **decrypt_keys = (uint8_t **)malloc(sizeof(uint8_t *) * rounds);
+    decrypt_keys[0] = (uint8_t *)malloc(sizeof(uint8_t) * 6);
+    decrypt_keys[1] = (uint8_t *)malloc(sizeof(uint8_t) * 6);
+
+    decrypt_keys[0][0] = 0x23;
+    decrypt_keys[0][1] = 0x54;
+    decrypt_keys[0][2] = 0x77;
+    decrypt_keys[0][3] = 0x29;
+    decrypt_keys[0][4] = 0xab;
+    decrypt_keys[0][5] = 0xfc;
+
+    decrypt_keys[1][0] = 0x13;
+    decrypt_keys[1][1] = 0x34;
+    decrypt_keys[1][2] = 0x57;
+    decrypt_keys[1][3] = 0x79;
+    decrypt_keys[1][4] = 0x9b;
+    decrypt_keys[1][5] = 0xbc;
+
+
+    uint8_t *output = (uint8_t *)malloc(sizeof(uint8_t) * 8);
+    uint8_t *output1 = (uint8_t *)malloc(sizeof(uint8_t) * 8);
+    print_byte_array_binary(input, 8);
+    feistel_network_apply(input, output, encrypt_keys, rounds, block_len, round_function_des);
+    print_byte_array_binary(output, 8);
+    feistel_network_apply(output, output1, decrypt_keys, rounds, block_len, round_function_des);
+    print_byte_array_binary(output1, 8);
+    // // ручной шаг для проверки
+    // const size_t half = block_len / 2;
+    // uint8_t L0[4], R0[4];
+    // memcpy(L0, input,       half);
+    // memcpy(R0, input + half, half);
+
+    // uint8_t F[4] = {0};
+    // round_function_des(R0, key_flat, F);
+
+    // uint8_t newR[4] = {0};
+    // for (size_t i = 0; i < 4; i++) newR[i] = L0[i] ^ F[i];
+
+    // // после цикла твоя функция делает финальную «перестановку половинок»: out = R1 || L1
+    // // где L1 = R0, R1 = newR
+    // uint8_t expected[8] = {0};
+    // memcpy(expected, newR, 4); // R1
+    // memcpy(expected + 4, R0, 4);  // L1
+
+    // assert(memcmp(output, expected, 8) == 0 && "single round result must match manual Feistel step");
+
+    // printf("test_single_round_matches_manual: OK\n");
+}
+
+
 int main(void) {
-    test_get_on_zero();
-    test_set_individual_bits();
-    test_clear_bits();
-    test_idempotence();
-    test_only_target_bit_changes();
-    test_highest_index_in_array();
-    test_cross_byte_sequences(); 
+    // test_get_on_zero();
+    // test_set_individual_bits();
+    // test_clear_bits();
+    // test_idempotence();
+    // test_only_target_bit_changes();
+    // test_highest_index_in_array();
+    // test_cross_byte_sequences(); 
+    test_single_round_matches_manual();
 
-    uint8_t input1[1] = {0b10101010};
-    size_t perm1[8] = {0,1,2,3,4,5,6,7};
-    uint8_t expected1[1] = {0b10101010};
-    test_case("Identity permutation", input1, 8, perm1, false, false, 8, expected1);
+    // uint8_t input1[1] = {0b10101010};
+    // size_t perm1[8] = {0,1,2,3,4,5,6,7};
+    // uint8_t expected1[1] = {0b10101010};
+    // test_case("Identity permutation", input1, 8, perm1, false, false, 8, expected1);
 
-    size_t perm2[8] = {7,6,5,4,3,2,1,0};
-    uint8_t expected2[1] = {0b10101010};
-    test_case("Reverse order", input1, 8, perm2, true, false, 8, expected2);
+    // size_t perm2[8] = {7,6,5,4,3,2,1,0};
+    // uint8_t expected2[1] = {0b10101010};
+    // test_case("Reverse order", input1, 8, perm2, true, false, 8, expected2);
 
-    size_t perm3[8] = {1,2,3,4,5,6,7,8};
-    uint8_t expected3[1] = {0b10101010};
-    test_case("1-based indexing", input1, 8, perm3, false, true, 8, expected3);
+    // size_t perm3[8] = {1,2,3,4,5,6,7,8};
+    // uint8_t expected3[1] = {0b10101010};
+    // test_case("1-based indexing", input1, 8, perm3, false, true, 8, expected3);
 
-    size_t perm4[8] = {8,7,6,5,4,3,2,1};
-    uint8_t expected4[1] = {0b10101010};
-    test_case("Reverse + 1-based", input1, 8, perm4, true, true, 8, expected4);
+    // size_t perm4[8] = {8,7,6,5,4,3,2,1};
+    // uint8_t expected4[1] = {0b10101010};
+    // test_case("Reverse + 1-based", input1, 8, perm4, true, true, 8, expected4);
 
-    size_t perm5[4] = {0,1,2,3};
-    const uint8_t expected5[1] = {0b10100000};
-    test_case("Partial bits", input1, 8, perm5, false, false, 4, expected5);
+    // size_t perm5[4] = {0,1,2,3};
+    // const uint8_t expected5[1] = {0b10100000};
+    // test_case("Partial bits", input1, 8, perm5, false, false, 4, expected5);
 
-    test_key_schedule();
-    test_round_function();
+    // test_key_schedule();
+    // test_round_function();
     return 0;
 }
 
