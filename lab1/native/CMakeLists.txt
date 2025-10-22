@@ -17,6 +17,7 @@ add_library(crypto_native SHARED
     bridge/DESKeySchedule.c
     bridge/DESRoundFunction.c
     bridge/FeistelNetwork.c
+    bridge/NativeFunctions.c
 )
 
 set_target_properties(crypto_native PROPERTIES

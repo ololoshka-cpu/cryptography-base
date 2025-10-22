@@ -32,6 +32,6 @@ JNIEXPORT jbyteArray JNICALL Java_project_algorythm_des_DESRoundFunction_applyDe
 
 JNIEXPORT jlong JNICALL Java_project_algorythm_des_DESRoundFunction_getFunctionAddressInLibrary
     (JNIEnv *env, jclass cls) {
-        printf("%p\n", round_function_des);
+        // printf("%p\n", round_function_des);
         return (jlong)(uintptr_t)round_function_des;
     };

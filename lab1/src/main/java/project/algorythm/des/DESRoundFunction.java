@@ -24,7 +24,7 @@ public class DESRoundFunction implements RoundFunction {
 
     public static void main(String[] args) {
         DESRoundFunction desRoundFunction = new DESRoundFunction();
-        System.out.println(desRoundFunction.getFunctionAddress());
+//        System.out.println(desRoundFunction.getFunctionAddress());
 //        byte[] round_key = {
 //                0b01010110,
 //                0b01111011,
