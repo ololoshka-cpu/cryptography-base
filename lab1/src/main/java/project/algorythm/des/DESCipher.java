@@ -1,16 +1,15 @@
 package project.algorythm.des;
 
+import org.springframework.stereotype.Component;
 import project.application.core.FeistelNetwork;
 import project.interfaces.KeySchedule;
 import project.interfaces.RoundFunction;
-import project.interfaces.SymmetricCypher;
-
-import java.util.Base64;
-import java.util.HexFormat;
+import project.interfaces.SymmetricCipher;
 
 import static project.application.core.NativeFunctions.bitPermutation;
 
-public class DESCypher extends FeistelNetwork implements SymmetricCypher {
+@Component
+public class DESCipher extends FeistelNetwork implements SymmetricCipher {
 
     private static final long[] IP = {
             58, 50, 42, 34, 26, 18, 10, 2,
@@ -37,21 +36,12 @@ public class DESCypher extends FeistelNetwork implements SymmetricCypher {
     private byte[] masterKey;
     private byte[][] encryptKeys;
     private byte[][] decryptKeys;
-    private final KeySchedule keySchedule;
 
-    public DESCypher(KeySchedule keySchedule, RoundFunction roundFunction, byte[] masterKey) {
+
+    public DESCipher(KeySchedule keySchedule, RoundFunction roundFunction, byte[] masterKey) {
         super(roundFunction);
-        this.keySchedule = keySchedule;
         this.masterKey = masterKey;
         this.encryptKeys = keySchedule.generateRoundKeys(masterKey);
-        initDecryptKeys(encryptKeys);
-    }
-
-
-    @Override
-    public void setKey(byte[] newMasterKey) {
-        this.masterKey = newMasterKey;
-        encryptKeys = keySchedule.generateRoundKeys(masterKey);
         initDecryptKeys(encryptKeys);
     }
 
@@ -60,7 +50,6 @@ public class DESCypher extends FeistelNetwork implements SymmetricCypher {
         byte[] permutedBlock = bitPermutation(plaintext, 64, IP, 64,  false, true, 64);
         byte[] encryptedBlock = apply(permutedBlock, encryptKeys);
         return bitPermutation(encryptedBlock, 64, IP_INV, 64, false, true, 64);
-//        return apply(plaintext, encryptKeys);
     }
 
     @Override
@@ -68,7 +57,11 @@ public class DESCypher extends FeistelNetwork implements SymmetricCypher {
         byte[] permutedBlock = bitPermutation(ciphertext, 64, IP, 64, false, true, 64);
         byte[] decryptedBlock = apply(permutedBlock, decryptKeys);
         return bitPermutation(decryptedBlock, 64, IP_INV, 64, false, true, 64);
-//        return apply(ciphertext, decryptKeys);
+    }
+
+    @Override
+    public int getBlockSize() {
+        return 8;
     }
 
     private void initDecryptKeys(byte[][] encryptKeys) {
@@ -76,42 +69,5 @@ public class DESCypher extends FeistelNetwork implements SymmetricCypher {
         for (int i = 0; i < encryptKeys.length; i++) {
             decryptKeys[i] = encryptKeys[encryptKeys.length - 1 - i];
         }
-    }
-
-    public static void main(String[] args) {
-        byte[] key = "equipted".getBytes();
-        DESCypher desCypher = new DESCypher(new DESKeySchedule(), new DESRoundFunction(), key);
-        byte[] plaintext = "constant".getBytes();
-        for (byte b : plaintext) {
-            System.out.print(b + " ");
-        }
-        System.out.println();
-        byte[] ciphertext = desCypher.encrypt(plaintext);
-        for (byte b : ciphertext) {
-            System.out.print(b + " ");
-        }
-
-//        System.out.println(Base64.getEncoder().encodeToString(ciphertext));
-        System.out.println();
-        byte[] openText = desCypher.decrypt(ciphertext);
-        for (byte b : openText) {
-            System.out.print(b + " ");
-        }
-        System.out.println();
-
-
-//        for (byte elem : "equipted".getBytes()) {
-//            System.out.print(elem + " ");
-//        }
-//
-//        System.out.println();
-//
-//        for (byte elem : "constant".getBytes()) {
-//            System.out.print(elem + " ");
-//        }
-        // 78 125 -87 -65 90 -25 39 100
-        // -125 -73 -61 123 124 72 39 -105
-//        System.out.println(HexFormat.of().formatHex(plaintext));
-//        System.out.println(HexFormat.of().formatHex(key));
     }
 }

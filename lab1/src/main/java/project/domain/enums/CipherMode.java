@@ -1,6 +1,6 @@
 package project.domain.enums;
 
-public enum CypherMode {
+public enum CipherMode {
     ECB,
     CBC,
     PCBC,

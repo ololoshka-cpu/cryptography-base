@@ -27,9 +27,14 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
+dependencies {
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+}
+
 tasks.test {
     useJUnitPlatform()
 }
+
 
 tasks.register("buildNative") {
     doLast {
