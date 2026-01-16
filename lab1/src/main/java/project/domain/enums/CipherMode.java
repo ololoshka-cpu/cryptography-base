@@ -3,20 +3,93 @@ package project.domain.enums;
 import project.interfaces.SymmetricCipher;
 
 public enum CipherMode {
-    ECB,
-    CBC {
-       @Override
-       public byte[] applyMode(byte[] plaintext, SymmetricCipher symmetricCipher) {
-           return null;
-       }
+    ECB {
+        @Override
+        public byte[] applyMode(byte[] paddingPlaintext, SymmetricCipher symmetricCipher) {
+            return applyEcbMode(paddingPlaintext, symmetricCipher);
+        }
+
+        @Override
+        public byte[] cancelMode(byte[] ciphertext, SymmetricCipher symmetricCipher) {
+            return cancelEcbMode(ciphertext, symmetricCipher);
+        }
     },
-    PCBC,
-    CFB,
-    OFB,
-    CTR,
-    RANDOM_DELTA;
+    CBC {
+        @Override
+        public byte[] applyMode(byte[] plaintext, SymmetricCipher symmetricCipher) {
+            throw new UnsupportedOperationException("CBC mode is not implemented");
+        }
+
+        @Override
+        public byte[] cancelMode(byte[] ciphertext, SymmetricCipher symmetricCipher) {
+            throw new UnsupportedOperationException("CBC mode is not implemented");
+        }
+    },
+    PCBC {
+        @Override
+        public byte[] applyMode(byte[] plaintext, SymmetricCipher symmetricCipher) {
+            throw new UnsupportedOperationException("PCBC mode is not implemented");
+        }
+
+        @Override
+        public byte[] cancelMode(byte[] ciphertext, SymmetricCipher symmetricCipher) {
+            throw new UnsupportedOperationException("PCBC mode is not implemented");
+        }
+    },
+    CFB {
+        @Override
+        public byte[] applyMode(byte[] plaintext, SymmetricCipher symmetricCipher) {
+            throw new UnsupportedOperationException("CFB mode is not implemented");
+        }
+
+        @Override
+        public byte[] cancelMode(byte[] ciphertext, SymmetricCipher symmetricCipher) {
+            throw new UnsupportedOperationException("CFB mode is not implemented");
+        }
+    },
+    OFB {
+        @Override
+        public byte[] applyMode(byte[] plaintext, SymmetricCipher symmetricCipher) {
+            throw new UnsupportedOperationException("OFB mode is not implemented");
+        }
+
+        @Override
+        public byte[] cancelMode(byte[] ciphertext, SymmetricCipher symmetricCipher) {
+            throw new UnsupportedOperationException("OFB mode is not implemented");
+        }
+    },
+    CTR {
+        @Override
+        public byte[] applyMode(byte[] plaintext, SymmetricCipher symmetricCipher) {
+            throw new UnsupportedOperationException("CTR mode is not implemented");
+        }
+
+        @Override
+        public byte[] cancelMode(byte[] ciphertext, SymmetricCipher symmetricCipher) {
+            throw new UnsupportedOperationException("CTR mode is not implemented");
+        }
+    },
+    RANDOM_DELTA {
+        @Override
+        public byte[] applyMode(byte[] plaintext, SymmetricCipher symmetricCipher) {
+            throw new UnsupportedOperationException("RANDOM_DELTA mode is not implemented");
+        }
+
+        @Override
+        public byte[] cancelMode(byte[] ciphertext, SymmetricCipher symmetricCipher) {
+            throw new UnsupportedOperationException("RANDOM_DELTA mode is not implemented");
+        }
+    };
 
     public byte[] applyMode(byte[] paddingPlaintext, SymmetricCipher symmetricCipher) {
+        return applyEcbMode(paddingPlaintext, symmetricCipher);
+    }
+
+    public byte[] cancelMode(byte[] ciphertext, SymmetricCipher symmetricCipher) {
+        return cancelEcbMode(ciphertext, symmetricCipher);
+    }
+
+    private static byte[] applyEcbMode(byte[] paddingPlaintext, SymmetricCipher symmetricCipher) {
         int blockSize = symmetricCipher.getBlockSize();
         byte[] encryptedPlaintext = new byte[paddingPlaintext.length];
         for (int i = 0; i < paddingPlaintext.length / blockSize; i++) {
@@ -28,13 +101,13 @@ public enum CipherMode {
         return encryptedPlaintext;
     }
 
-    public byte[] cancelMode(byte[] ciphertext, SymmetricCipher symmetricCipher) {
+    private static byte[] cancelEcbMode(byte[] ciphertext, SymmetricCipher symmetricCipher) {
         int blockSize = symmetricCipher.getBlockSize();
         byte[] decryptedCiphertext = new byte[ciphertext.length];
         for (int i = 0; i < decryptedCiphertext.length / blockSize; i++) {
             byte[] word = new byte[blockSize];
             System.arraycopy(ciphertext, i * blockSize, word, 0, blockSize);
-            byte [] decryptedWord = symmetricCipher.decrypt(word);
+            byte[] decryptedWord = symmetricCipher.decrypt(word);
             System.arraycopy(decryptedWord, 0, decryptedCiphertext, i * blockSize, blockSize);
         }
         return decryptedCiphertext;

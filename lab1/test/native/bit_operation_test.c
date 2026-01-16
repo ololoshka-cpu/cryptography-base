@@ -385,7 +385,7 @@ int main(void) {
 
     uint8_t input[] = {34, 21, 54, 78, 14, 64, 0, 1};
 
-    uint8_t output[0] = {0};
+    uint8_t output[8] = {0};
 
     bit_permutation(input, 64, perm, false, true, output, 64);
 
@@ -396,4 +396,3 @@ int main(void) {
 
     return 0;
 }
-

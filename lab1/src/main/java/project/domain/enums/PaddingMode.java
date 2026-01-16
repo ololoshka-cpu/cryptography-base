@@ -15,13 +15,10 @@ public enum PaddingMode {
         @Override
         public byte[] removePadding(byte[] data) {
             int newLength = data.length;
-            for (int i = data.length - 1; data[i] == 0; i--) {
+            for (int i = data.length - 1; i >= 0 && data[i] == 0; i--) {
                 newLength = i;
             }
-            return Arrays.copyOf(
-                    data,
-                    newLength
-            );
+            return Arrays.copyOf(data, newLength);
         }
     },
     ANSI_X_923 {
@@ -42,13 +39,16 @@ public enum PaddingMode {
 
         @Override
         public byte[] removePadding(byte[] data) {
-            byte controlByte = data[data.length - 1];
-            for (int i = data.length - 2; i > data.length - 1 - (int) controlByte; i--) {
+            int controlByte = data[data.length - 1] & 0xFF;
+            if (controlByte == 0 || controlByte > data.length) {
+                return data;
+            }
+            for (int i = data.length - 2; i > data.length - 1 - controlByte; i--) {
                 if (data[i] != 0) {
                     return data;
                 }
             }
-            return Arrays.copyOf(data, data.length - (int) controlByte);
+            return Arrays.copyOf(data, data.length - controlByte);
         }
     },
     PKCS7 {
@@ -71,7 +71,11 @@ public enum PaddingMode {
 
         @Override
         public byte[] removePadding(byte[] data) {
-            return Arrays.copyOf(data, data.length - data[data.length - 1]);
+            int paddingLength = data[data.length - 1] & 0xFF;
+            if (paddingLength == 0 || paddingLength > data.length) {
+                return data;
+            }
+            return Arrays.copyOf(data, data.length - paddingLength);
         }
     },
     ISO_10126 {
@@ -96,7 +100,11 @@ public enum PaddingMode {
 
         @Override
         public byte[] removePadding(byte[] data) {
-            return Arrays.copyOf(data, data.length - data[data.length - 1]);
+            int paddingLength = data[data.length - 1] & 0xFF;
+            if (paddingLength == 0 || paddingLength > data.length) {
+                return data;
+            }
+            return Arrays.copyOf(data, data.length - paddingLength);
         }
     };
 

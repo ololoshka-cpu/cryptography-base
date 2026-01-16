@@ -48,7 +48,7 @@ public class DESCipherTest {
 
 //        System.out.println(new String(decrypted));
 
-//        assertArrayEquals(input, decrypted);
+        assertArrayEquals(input, decrypted);
     }
 
     @Test
