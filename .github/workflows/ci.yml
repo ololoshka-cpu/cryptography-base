@@ -19,8 +19,17 @@ jobs:
           java-version: "17"
           cache: gradle
 
+      - name: Build native library
+        working-directory: lab1
+        run: |
+          cmake -S native -B native/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build native/build --target crypto_native
+
       - name: Run tests
         uses: gradle/gradle-build-action@v3
+        env:
+          LD_LIBRARY_PATH: ${{ github.workspace }}/lab1/native/build
+          JAVA_TOOL_OPTIONS: -Djava.library.path=${{ github.workspace }}/lab1/native/build
         with:
           gradle-version: "8.4"
           arguments: test
