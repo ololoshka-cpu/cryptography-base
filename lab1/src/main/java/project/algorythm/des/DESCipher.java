@@ -57,7 +57,7 @@ public class DESCipher extends FeistelNetwork implements SymmetricCipher {
         byte[] permutedBlock = bitPermutation(ciphertext, 64, IP, 64, false, true, 64);
         byte[] decryptedBlock = apply(permutedBlock, decryptKeys);
         return bitPermutation(decryptedBlock, 64, IP_INV, 64, false, true, 64);
-    }
+    }   
 
     @Override
     public int getBlockSize() {

@@ -13,9 +13,11 @@ import project.interfaces.SymmetricCipher;
 
 import java.util.Base64;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
 public class DESCipherTest {
 
-    private static final byte[] key = "equipted".getBytes();
+    private static final byte[] key = "rquipted".getBytes();
     private static final KeySchedule keySchedule = new DESKeySchedule();
     private static final RoundFunction roundFunction = new DESRoundFunction();
     private static final SymmetricCipher symmetricCipher = new DESCipher(keySchedule, roundFunction, key);
@@ -29,22 +31,22 @@ public class DESCipherTest {
 //        random.nextBytes(input);
 
         SymmetricCipherContext context = new SymmetricCipherContext(
-                CipherMode.CBC,
+                CipherMode.ECB,
                 PaddingMode.ZEROS,
                 symmetricCipher
         );
 
         byte[] encrypted = context.encrypt(input);
 
-        for (byte e: encrypted) {
-            System.out.print(e + " ");
-        }
+//        for (byte e: encrypted) {
+//            System.out.print(e + " ");
+//        }
 
         byte[] decrypted = context.decrypt(encrypted);
         String word = Base64.getEncoder().encodeToString(encrypted);
 
 
-        System.out.println(new String(decrypted));
+//        System.out.println(new String(decrypted));
 
 //        assertArrayEquals(input, decrypted);
     }
@@ -58,19 +60,20 @@ public class DESCipherTest {
 //        input = Arrays.copyOf(input, input.length + 8 - input.length % 8);
 //        input[input.length - 1] = (byte) 6;
         SymmetricCipherContext context = new SymmetricCipherContext(
-                CipherMode.CBC,
+                CipherMode.ECB,
                 PaddingMode.ISO_10126,
                 symmetricCipher
         );
 
         byte[] encrypted = context.encrypt(input);
-
+//        System.out.println(new String(encrypted));
         byte[] decrypted = context.decrypt(encrypted);
-        String word = Base64.getEncoder().encodeToString(encrypted);
+//        String word = Base64.getEncoder().encodeToString(encrypted);
 
 
-        System.out.println(new String(decrypted));
+//        System.out.println(new String(decrypted));
 
-//        assertArrayEquals(input, decrypted);
+        assertArrayEquals(input, decrypted);
+        System.out.println("TEST DONE");
     }
 }

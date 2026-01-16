@@ -13,7 +13,7 @@ public enum PaddingMode {
         }
 
         @Override
-        public byte[] removePadding(byte[] data, int blockSize) {
+        public byte[] removePadding(byte[] data) {
             int newLength = data.length;
             for (int i = data.length - 1; data[i] == 0; i--) {
                 newLength = i;
@@ -41,7 +41,7 @@ public enum PaddingMode {
         }
 
         @Override
-        public byte[] removePadding(byte[] data, int blockSize) {
+        public byte[] removePadding(byte[] data) {
             byte controlByte = data[data.length - 1];
             for (int i = data.length - 2; i > data.length - 1 - (int) controlByte; i--) {
                 if (data[i] != 0) {
@@ -70,7 +70,7 @@ public enum PaddingMode {
         }
 
         @Override
-        public byte[] removePadding(byte[] data, int blockSize) {
+        public byte[] removePadding(byte[] data) {
             return Arrays.copyOf(data, data.length - data[data.length - 1]);
         }
     },
@@ -90,12 +90,12 @@ public enum PaddingMode {
                 result[i] = (byte) rnd.nextInt(256);
             }
             result[result.length - 1] = controlByte;
-            System.out.printf("Old len = %s, new len = %s%n", data.length, result.length);
+//            System.out.printf("Old len = %s, new len = %s%n", data.length, result.length);
             return result;
         }
 
         @Override
-        public byte[] removePadding(byte[] data, int blockSize) {
+        public byte[] removePadding(byte[] data) {
             return Arrays.copyOf(data, data.length - data[data.length - 1]);
         }
     };
@@ -106,7 +106,7 @@ public enum PaddingMode {
         return data;
     }
 
-    public byte[] removePadding(byte[] data, int blockSize) {
+    public byte[] removePadding(byte[] data) {
         return data;
     }
 }
